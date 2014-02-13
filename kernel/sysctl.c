@@ -63,6 +63,7 @@
 #include <linux/binfmts.h>
 #include <linux/sched/sysctl.h>
 #include <linux/kexec.h>
+#include <linux/runtime_dependency.h>
 
 #include <asm/uaccess.h>
 #include <asm/processor.h>
@@ -1109,6 +1110,13 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 #endif
+	{
+		.procname	= "runtime_dependency",
+		.data		= &rt_dependency_state,
+		.maxlen		= sizeof(u64),
+		.mode		= 0644,
+		.proc_handler	= proc_rt_dependency_handler,
+	},
 	{ }
 };
 
