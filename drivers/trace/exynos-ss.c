@@ -1850,6 +1850,12 @@ static int __init exynos_ss_fixmap(void)
 
 	/* output the information of exynos-snapshot */
 	exynos_ss_output();
+
+#ifdef CONFIG_SEC_DEBUG
+	sec_debug_save_last_kmsg(ess_items[ess_desc.log_kernel_num].head_ptr,
+				 ess_items[ess_desc.log_kernel_num].curr_ptr);
+#endif
+
 	return 0;
 }
 
@@ -2486,18 +2492,21 @@ void __exynos_ss_printkl(size_t msg, size_t val)
 #define ESS_LOGGER_SKIP_COUNT		(4)
 #define ESS_LOGGER_STRING_PAD		(1)
 #define ESS_LOGGER_HEADER_SIZE		(68)
+
 #define ESS_LOG_ID_MAIN 		(0)
 #define ESS_LOG_ID_RADIO		(1)
 #define ESS_LOG_ID_EVENTS		(2)
 #define ESS_LOG_ID_SYSTEM		(3)
 #define ESS_LOG_ID_CRASH		(4)
 #define ESS_LOG_ID_KERNEL		(5)
+
 typedef struct __attribute__((__packed__)) {
     uint8_t magic;
     uint16_t len;
     uint16_t uid;
     uint16_t pid;
 } ess_pmsg_log_header_t;
+
 typedef struct __attribute__((__packed__)) {
 	unsigned char id;
 	uint16_t tid;
