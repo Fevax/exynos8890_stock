@@ -62,7 +62,7 @@ static const struct of_device_id decon_device_table[] = {
 MODULE_DEVICE_TABLE(of, decon_device_table);
 #endif
 
-int decon_log_level = 6;
+int decon_log_level = 8;
 module_param(decon_log_level, int, 0644);
 
 struct decon_device *decon_f_drvdata;
