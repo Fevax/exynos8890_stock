@@ -79,6 +79,7 @@
 /*  Four-character-code (FOURCC) */
 #define v4l2_fourcc(a, b, c, d)\
 	((__u32)(a) | ((__u32)(b) << 8) | ((__u32)(c) << 16) | ((__u32)(d) << 24))
+#define v4l2_fourcc_be(a, b, c, d)	(v4l2_fourcc(a, b, c, d) | (1 << 31))
 
 /*
  *	E N U M S
@@ -821,26 +822,34 @@ struct v4l2_buffer {
 };
 
 /*  Flags for 'flags' field */
-#define V4L2_BUF_FLAG_MAPPED	0x0001  /* Buffer is mapped (flag) */
-#define V4L2_BUF_FLAG_QUEUED	0x0002	/* Buffer is queued for processing */
-#define V4L2_BUF_FLAG_DONE	0x0004	/* Buffer is ready */
-#define V4L2_BUF_FLAG_KEYFRAME	0x0008	/* Image is a keyframe (I-frame) */
-#define V4L2_BUF_FLAG_PFRAME	0x0010	/* Image is a P-frame */
-#define V4L2_BUF_FLAG_BFRAME	0x0020	/* Image is a B-frame */
+/* Buffer is mapped (flag) */
+#define V4L2_BUF_FLAG_MAPPED			0x00000001
+/* Buffer is queued for processing */
+#define V4L2_BUF_FLAG_QUEUED			0x00000002
+/* Buffer is ready */
+#define V4L2_BUF_FLAG_DONE			0x00000004
+/* Image is a keyframe (I-frame) */
+#define V4L2_BUF_FLAG_KEYFRAME			0x00000008
+/* Image is a P-frame */
+#define V4L2_BUF_FLAG_PFRAME			0x00000010
+/* Image is a B-frame */
+#define V4L2_BUF_FLAG_BFRAME			0x00000020
 /* Buffer is ready, but the data contained within is corrupted. */
-#define V4L2_BUF_FLAG_ERROR	0x0040
-#define V4L2_BUF_FLAG_TIMECODE	0x0100	/* timecode field is valid */
-#define V4L2_BUF_FLAG_PREPARED	0x0400	/* Buffer is prepared for queuing */
+#define V4L2_BUF_FLAG_ERROR			0x00000040
+/* timecode field is valid */
+#define V4L2_BUF_FLAG_TIMECODE			0x00000100
+/* Buffer is prepared for queuing */
+#define V4L2_BUF_FLAG_PREPARED			0x00000400
 /* Cache handling flags */
-#define V4L2_BUF_FLAG_NO_CACHE_INVALIDATE	0x0800
-#define V4L2_BUF_FLAG_NO_CACHE_CLEAN		0x1000
+#define V4L2_BUF_FLAG_NO_CACHE_INVALIDATE	0x00000800
+#define V4L2_BUF_FLAG_NO_CACHE_CLEAN		0x00001000
 /* Timestamp type */
-#define V4L2_BUF_FLAG_TIMESTAMP_MASK		0xe000
-#define V4L2_BUF_FLAG_TIMESTAMP_UNKNOWN		0x0000
-#define V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC	0x2000
-#define V4L2_BUF_FLAG_TIMESTAMP_COPY		0x4000
-/* Expects and returns a sync fence */
-#define V4L2_BUF_FLAG_USE_SYNC	0x8000
+#define V4L2_BUF_FLAG_TIMESTAMP_MASK		0x0000e000
+#define V4L2_BUF_FLAG_TIMESTAMP_UNKNOWN		0x00000000
+#define V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC	0x00002000
+#define V4L2_BUF_FLAG_TIMESTAMP_COPY		0x00004000
+/* Expects and returns an Android sync fence */
+#define V4L2_BUF_FLAG_USE_SYNC			0x00008000
 /* Timestamp sources. */
 #define V4L2_BUF_FLAG_TSTAMP_SRC_MASK		0x00070000
 #define V4L2_BUF_FLAG_TSTAMP_SRC_EOF		0x00000000
@@ -882,7 +891,16 @@ struct v4l2_framebuffer {
 /* FIXME: in theory we should pass something like PCI device + memory
  * region + offset instead of some physical address */
 	void                    *base;
-	struct v4l2_pix_format	fmt;
+	struct {
+		__u32		width;
+		__u32		height;
+		__u32		pixelformat;
+		__u32		field;		/* enum v4l2_field */
+		__u32		bytesperline;	/* for padding, zero if unused */
+		__u32		sizeimage;
+		__u32		colorspace;	/* enum v4l2_colorspace */
+		__u32		priv;		/* reserved field, set to 0 */
+	} fmt;
 };
 /*  Flags for the 'capability' field. Read only */
 #define V4L2_FBUF_CAP_EXTERNOVERLAY	0x0001
@@ -1313,9 +1331,6 @@ struct v4l2_dv_timings {
 /* Values for the type field */
 #define V4L2_DV_BT_656_1120	0	/* BT.656/1120 timing type */
 
-#define V4L2_DV_BT_SB_HALF	(1 << 8)	/* side-by-side S3D type */
-#define V4L2_DV_BT_TB		(1 << 6)	/* top and bottom S3D type */
-#define V4L2_DV_BT_FP		(1 << 0)	/* frame packing S3D type */
 
 /** struct v4l2_enum_dv_timings - DV timings enumeration
  * @index:	enumeration index
@@ -2242,12 +2257,6 @@ struct v4l2_create_buffers {
    You must be root to use these ioctls. Never use these in applications! */
 #define	VIDIOC_DBG_S_REGISTER 	 _IOW('V', 79, struct v4l2_dbg_register)
 #define	VIDIOC_DBG_G_REGISTER 	_IOWR('V', 80, struct v4l2_dbg_register)
-
-/* Experimental, meant for debugging, testing and internal use.
-   Never use this ioctl in applications!
-   Note: this ioctl is deprecated in favor of VIDIOC_DBG_G_CHIP_INFO and
-   will go away in the future. */
-#define VIDIOC_DBG_G_CHIP_IDENT _IOWR('V', 81, struct v4l2_dbg_chip_ident)
 
 #define VIDIOC_S_HW_FREQ_SEEK	 _IOW('V', 82, struct v4l2_hw_freq_seek)
 
