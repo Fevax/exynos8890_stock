@@ -105,11 +105,9 @@
 
 #define INTR_BUFFER_SIZE           28
 
-#define DRIVER_NAME		 "usb_mtp_gadget"
-
 #define MAX_GUID_SIZE	0x28
 static const char mtpg_longname[] =	"mtp";
-static const char shortname[] = DRIVER_NAME;
+static const char shortname[] = "usb_mtp_gadget";
 static int mtp_pid;
 
 char guid_info[MAX_GUID_SIZE+1];
@@ -835,7 +833,7 @@ static void interrupt_complete(struct usb_ep *ep, struct usb_request *req)
 }
 */
 static ssize_t interrupt_write(struct file *fd,
-			struct mtp_event *event, size_t count)
+			struct _mtp_event *event, size_t count)
 {
 	struct mtpg_dev *dev = fd->private_data;
 	struct usb_request *req = 0;
@@ -989,7 +987,7 @@ static void read_send_work(struct work_struct *work)
 static long  mtpg_ioctl(struct file *fd, unsigned int code, unsigned long arg)
 {
 	struct mtpg_dev		*dev = fd->private_data;
-  struct mtp_event        event;
+  struct _mtp_event        event;
 	struct usb_composite_dev *cdev;
 	struct usb_request	*req;
 	int status = 0;
@@ -1751,7 +1749,7 @@ static int _mtp_ctrlrequest(struct usb_composite_dev *cdev,
 	return value;
 }
 
-static int mtp_bind_config(struct usb_configuration *c, bool ptp_config)
+static int _mtp_bind_config(struct usb_configuration *c, bool ptp_config)
 {
 	struct mtpg_dev	*mtpg = the_mtpg;
 	int		status = 0;
@@ -1857,7 +1855,7 @@ err_misc_register:
 	return rc;
 }
 
-static void mtp_cleanup(void)
+static void _mtp_cleanup(void)
 {
 	struct mtpg_dev	*mtpg = the_mtpg;
 	printk(KERN_DEBUG "[%s:::%d]\n", __func__, __LINE__);

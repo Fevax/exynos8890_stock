@@ -27,8 +27,8 @@ enum dependency_mask {
 	MTP_SAMSUNG_MASK = 1 << MTP_SAMSUNG,
 };
 
-int proc_rt_dependency_handler(ctl_table *table, int write, void __user *buffer,
-				size_t *lenp, loff_t *ppos);
+int proc_rt_dependency_handler(struct ctl_table *table, int write, 
+				void __user *buffer, size_t *lenp, loff_t *ppos);
 void rt_callback_register(void* callback, u64 mask);
 bool rt_is_flag(int flag);
 bool rt_is_mask(u64 mask);

@@ -53,7 +53,7 @@ bool rt_is_mask(u64 mask)
 	return (rt_dependency_state == mask);
 }
 
-int proc_rt_dependency_handler(ctl_table *table, int write, void __user *buffer,
+int proc_rt_dependency_handler(struct ctl_table *table, int write, void __user *buffer,
 			   size_t *lenp, loff_t *ppos)
 {
 	struct registree *registree;
