@@ -19,7 +19,7 @@
 
 #include <linux/vmm.h>
 
-#define vmm_ELF_PATH "init/vmm.elf"
+#define vmm_ELF_PATH "/mnt/Android/cm13/kernel/samsung/exynos8890/init/vmm.elf"
 
 #define SMC_64BIT_RET_MAGIC 0xC2000401
 
